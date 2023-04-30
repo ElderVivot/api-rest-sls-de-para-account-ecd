@@ -1,0 +1,67 @@
+service: api-rest-sls-DeParaAccountECD
+frameworkVersion: '3'
+
+custom:
+  tableName: de-para-account-ecd
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: prod
+  region: us-east-2
+  memorySize: 128
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [ DeParaAccountECDTable, Arn ]
+  environment:
+    TABLE_NAME: ${self:custom.tableName}
+
+functions:
+  get:
+    handler: src/get.GetData
+    events:
+      - httpApi:
+          path: /v1/de-para-account-ecd
+          method: get
+  put:
+    handler: src/put.PutData
+    events:
+      - httpApi:
+          path: /v1/de-para-account-ecd
+          method: put
+  delete:
+    handler: src/delete.DeleteData
+    events:
+      - httpApi:
+          path: /v1/de-para-account-ecd/{id}
+          method: delete
+  getOne:
+    handler: src/get.GetData
+    events:
+      - httpApi:
+          path: /v1/de-para-account-ecd/{id}
+          method: get
+
+resources:
+  Resources:
+    DeParaAccountECDTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.tableName}
