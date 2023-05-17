@@ -6,7 +6,6 @@ const client = new DynamoDBClient({})
 const dynamo = DynamoDBDocumentClient.from(client)
 
 export async function PutData(event, context) {
-    console.log(event)
     let body
     let statusCode = 200
     const headers = {
