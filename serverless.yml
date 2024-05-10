@@ -41,6 +41,12 @@ functions:
       - httpApi:
           path: /v1/de-para-account-ecd
           method: put
+  putZipData:
+    handler: src/put-zipdata.PutData
+    events:
+      - httpApi:
+          path: /v1/de-para-account-ecd-zip
+          method: put
   delete:
     handler: src/delete.DeleteData
     events:
